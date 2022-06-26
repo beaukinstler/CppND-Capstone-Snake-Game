@@ -12,7 +12,12 @@ class Snake {
       : grid_width(grid_width),
         grid_height(grid_height),
         head_x(grid_width / 2),
-        head_y(grid_height / 2) {}
+        head_y(grid_height / 2) {
+          for(int i = 0; i < size; i++){
+            SDL_Point p{head_x, (head_y + (i * 1.0) + 1.0)};
+            body.push_back(p);
+          }
+        }
 
   void Update();
 
@@ -22,7 +27,7 @@ class Snake {
   Direction direction = Direction::kUp;
 
   float speed{0.1f};
-  int size{1};
+  int size{30};
   bool alive{true};
   float head_x;
   float head_y;
