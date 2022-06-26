@@ -7,7 +7,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
-      snake2(grid_width -1 , grid_height - 1) {
+      snake2(grid_width, grid_height, 1) {
   PlaceFood();
 }
 
@@ -27,8 +27,10 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     controller.HandleInput(running, snake);
     Update(snake);
     Update(snake2);
-    renderer.Render(snake2, food);
-    renderer.Render(snake, food);
+    // renderer.Render(snake2, food);
+    // renderer.Render(snake, food);
+    renderer.Render(snake, snake2, food);
+
 
 
     frame_end = SDL_GetTicks();

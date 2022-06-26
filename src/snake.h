@@ -18,6 +18,16 @@ class Snake {
             body.push_back(p);
           }
         }
+  Snake(int grid_width, int grid_height, int offset)
+      : grid_width(grid_width),
+        grid_height(grid_height),
+        head_x(grid_width / 2  - offset ),
+        head_y(grid_height / 2  - offset ) {
+          for(int i = 0; i < size; i++){
+            SDL_Point p{head_x, (head_y + (i * 1.0) + 1.0)};
+            body.push_back(p);
+          }
+        }
 
   void Update();
 
