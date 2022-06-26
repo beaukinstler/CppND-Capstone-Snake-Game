@@ -17,7 +17,7 @@ class Game {
 
  private:
   Snake snake;
-  // Snake snake2;
+  Snake snake2;
   SDL_Point food;
 
   std::random_device dev;
@@ -28,7 +28,7 @@ class Game {
   int score{0};
 
   void PlaceFood();
-  void Update();
+  void Update(Snake& snake);
 };
 
 #endif
