@@ -22,7 +22,7 @@ class Game {
 
  private:
   std::mutex _mtx;
-  Snake snake;
+  Snake snake1;
   Snake snake2;
   SDL_Point food;
 

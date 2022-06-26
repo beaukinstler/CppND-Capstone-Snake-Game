@@ -3,7 +3,7 @@
 #include "SDL.h"
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
-    : snake(grid_width, grid_height),
+    : snake1(grid_width, grid_height),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
@@ -24,12 +24,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake);
-    Update(snake);
+    controller.HandleInput(running, snake1);
+    Update(snake1);
     Update(snake2);
     // renderer.Render(snake2, food);
     // renderer.Render(snake, food);
-    renderer.Render(snake, snake2, food);
+    renderer.Render(snake1, snake2, food);
 
 
 
@@ -63,7 +63,8 @@ void Game::PlaceFood() {
     y = random_h(engine);
     // Check that the location is not occupied by a snake item before placing
     // food.
-    if (!snake.SnakeCell(x, y)) {
+
+    if (!this->snake1.SnakeCell(x, y) && !this->snake2.SnakeCell(x, y)) {
       food.x = x;
       food.y = y;
       return;
@@ -76,7 +77,8 @@ void Game::Update(Snake &snake) {
   // lock 
   std::lock_guard<std::mutex> lock(_mtx);
 
-  if (!snake.alive) return;
+  // exit if snake 1 is not alive
+  if (!snake.alive || !(this->snake1.alive)) return;
 
   snake.Update();
 
@@ -89,11 +91,11 @@ void Game::Update(Snake &snake) {
     PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
-    // snake.speed += 0.02;
-    snake.speed += 0.00;
+    snake.speed += 0.02;
+    // snake.speed += 0.00;
 
   }
 }
 
 int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
+int Game::GetSize() const { return snake1.size; }
