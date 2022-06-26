@@ -53,7 +53,8 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   } else {
     growing = false;
     size--;
-    body.pop_back();
+    // body.pop_back(); // this leaves a gap
+    body.erase(body.begin());
     body.erase(body.begin());
   }
 
