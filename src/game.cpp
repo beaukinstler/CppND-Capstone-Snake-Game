@@ -27,8 +27,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     controller.HandleInput(running, snake);
     Update(snake);
     Update(snake2);
-    renderer.Render(snake, food);
     renderer.Render(snake2, food);
+    renderer.Render(snake, food);
+
 
     frame_end = SDL_GetTicks();
 
@@ -69,6 +70,10 @@ void Game::PlaceFood() {
 }
 
 void Game::Update(Snake &snake) {
+
+  // lock 
+  std::lock_guard<std::mutex> lock(_mtx);
+
   if (!snake.alive) return;
 
   snake.Update();

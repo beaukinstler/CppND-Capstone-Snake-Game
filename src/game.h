@@ -7,6 +7,10 @@
 #include "renderer.h"
 #include "snake.h"
 
+#include <thread>
+#include <mutex>
+#include <memory>
+
 class Game {
  public:
   Game(std::size_t grid_width, std::size_t grid_height);
@@ -15,7 +19,9 @@ class Game {
   int GetScore() const;
   int GetSize() const;
 
+
  private:
+  std::mutex _mtx;
   Snake snake;
   Snake snake2;
   SDL_Point food;
