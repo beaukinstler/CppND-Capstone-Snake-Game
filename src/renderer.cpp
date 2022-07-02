@@ -78,7 +78,8 @@ void Renderer::Render(Snake const &snake, SDL_Point const &food) {
 // Renders Snake
 void Renderer::RenderSnake(Snake const &snake, SDL_Rect &block){
     // Render snake's body
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  if(snake.GetPlayerNum() != 0){ SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);}
+  else{ SDL_SetRenderDrawColor(sdl_renderer, 0xAA, 0xA1, 0xBA, 0xB4); }
   for (SDL_Point const &point : snake.body) {
     block.x = point.x * block.w;
     block.y = point.y * block.h;

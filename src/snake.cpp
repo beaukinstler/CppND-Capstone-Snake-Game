@@ -80,3 +80,8 @@ bool Snake::SnakeCell(int x, int y) {
   }
   return false;
 }
+
+int Snake::GetPlayerNum() const
+{
+  return this->player_num;
+}
