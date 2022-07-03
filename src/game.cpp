@@ -25,6 +25,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   while (running) {
     frame_start = SDL_GetTicks();
     if(computerSnakes.size() == 0) {
+      computerSnake.Release();
       computerSnakes.push_back(std::make_shared<Snake>(std::move(computerSnake))) ;
     };
 

@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include <random>
 #include <thread>
+#include <mutex>
 
 class ComputerSnake : public Snake {
  public:
@@ -28,20 +29,28 @@ class ComputerSnake : public Snake {
         _lastKnownFoodPoint.y = food.y;
       }
 
+      // release the snake
+      void Release(){
+        // start the hunting thread
+        threads.emplace_back(std::thread(&ComputerSnake::Hunt, this));
+      }
+
       void Hunt(){
 
         // resusing code from my previous poject to generate random number for delay
         std::random_device rdev;
         std::default_random_engine randomTime(rdev());
-        std::uniform_int_distribution<int> distrib(4, 6);
+        std::uniform_int_distribution<int> distrib(1, 3);
         int randomSeconds = distrib(randomTime);
         std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
         std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int>(randomSeconds);
         while(true){
           if (now > stopTime){
+            std::lock_guard<std::mutex> lock(_mtx);
             // get location of food
             // UpdateLastKnownFoodPoint(TODO GET FOOD FROM GAME);
-
+            // for now food will always be 1,1
+            
             // make most reasonable move toward the food
             int xdiff = head_x - this->_lastKnownFoodPoint.x;
             int ydiff = head_y - this->_lastKnownFoodPoint.y;
@@ -55,6 +64,16 @@ class ComputerSnake : public Snake {
                 this->direction = Direction::kLeft;
               }
             }
+            else if(xIsOnPoint){
+              if(ydiff > 0){
+                this->direction = Direction::kDown;
+              }
+              else{
+                this->direction = Direction::kUp;
+              }
+            }
+
+            
 
             // delay for amount of time, set as snake quickness.
           }
@@ -68,9 +87,12 @@ class ComputerSnake : public Snake {
       }
       
   private:
+    std::vector<std::thread> threads; 
+
     int snakeSlowness{500}; // will god same direction(sleep) for millisecond before changing directions
     int player_num{0}; // 0 = computer
     SDL_Point _lastKnownFoodPoint{1,1};
+    std::mutex _mtx;
 
     
 };
