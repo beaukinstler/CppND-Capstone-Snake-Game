@@ -6,6 +6,7 @@
 #include "controller.h"
 #include "renderer.h"
 #include "snake.h"
+#include "computerSnake.h"
 
 #include <thread>
 #include <mutex>
@@ -23,7 +24,7 @@ class Game {
  private:
   std::mutex _mtx;
   Snake snake1;
-  Snake snake2;
+  ComputerSnake computerSnake;
   SDL_Point food;
 
   std::random_device dev;

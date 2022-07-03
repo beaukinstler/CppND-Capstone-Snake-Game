@@ -3,11 +3,11 @@
 #include "SDL.h"
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
-    : snake1(grid_width, grid_height, 0, 1),
+    : snake1(grid_width, grid_height, 1),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
-      snake2(grid_width, grid_height, 1, 0) {
+      computerSnake(grid_width, grid_height, 1, 0) {
   PlaceFood();
 }
 
@@ -20,16 +20,21 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
 
+  std::vector<std::shared_ptr<Snake>> computerSnakes;
+
   while (running) {
     frame_start = SDL_GetTicks();
+    if(computerSnakes.size() == 0) {
+      computerSnakes.push_back(std::make_shared<Snake>(std::move(computerSnake))) ;
+    };
 
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snake1);
     Update(snake1);
-    Update(snake2);
-    // renderer.Render(snake2, food);
+    Update(computerSnake);
+    // renderer.Render(computerSnake, food);
     // renderer.Render(snake, food);
-    renderer.Render(snake1, snake2, food);
+    renderer.Render(snake1, computerSnake, food);
 
 
 
@@ -64,7 +69,7 @@ void Game::PlaceFood() {
     // Check that the location is not occupied by a snake item before placing
     // food.
 
-    if (!this->snake1.SnakeCell(x, y) && !this->snake2.SnakeCell(x, y)) {
+    if (!this->snake1.SnakeCell(x, y) && !this->computerSnake.SnakeCell(x, y)) {
       food.x = x;
       food.y = y;
       return;
@@ -87,9 +92,11 @@ void Game::Update(Snake &snake) {
 
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
-    score++;
+    if(snake.GetPlayerNum() != 0){
+      score++;
+    }
     PlaceFood();
-    // Grow snake and increase speed.
+    // Shrink snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
     // snake.speed += 0.00;

@@ -98,7 +98,7 @@ void Renderer::RenderSnake(Snake const &snake, SDL_Rect &block){
 }
 
 
-void Renderer::Render(Snake const &snake, Snake const &snake2, SDL_Point const &food) {
+void Renderer::Render(Snake const &snake, Snake const &computerSnake, SDL_Point const &food) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -115,7 +115,7 @@ void Renderer::Render(Snake const &snake, Snake const &snake2, SDL_Point const &
 
   // Render snakes
   RenderSnake(snake, block);
-  RenderSnake(snake2, block);
+  RenderSnake(computerSnake, block);
 
   // SDL_RenderFillRect(sdl_renderer, &block);
 
