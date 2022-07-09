@@ -36,74 +36,91 @@ class ComputerSnake : public Snake {
     std::cout << "killed the snake\n";
   }
 
-      void UpdateLastKnownFoodPoint(const SDL_Point &food){
-        _lastKnownFoodPoint.x = food.x;
-        _lastKnownFoodPoint.y = food.y;
-      }
+  void UpdateLastKnownFoodPoint(const SDL_Point &food){
+    _lastKnownFoodPoint.x = food.x;
+    _lastKnownFoodPoint.y = food.y;
+  }
 
-      // release the snake
-      void Release(){
-        // start the hunting thread
-        threads.emplace_back(std::thread(&ComputerSnake::Hunt, this));
+  // release the snake
+  void Release(){
+    // start the hunting thread
+    threads.emplace_back(std::thread(&ComputerSnake::Hunt, this));
         
     std::cout << "realease the snake thread\n";
-      }
+  }
 
-      void Hunt(){
+  void Hunt(){
 
-        // resusing code from my previous poject to generate random number for delay
-        std::random_device rdev;
-        std::default_random_engine randomTime(rdev());
-        std::uniform_int_distribution<int> distrib(1, 3);
-        int randomSeconds = distrib(randomTime);
-        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-        std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int>(randomSeconds);
-        while(true){
-          if (now > stopTime){
-            std::lock_guard<std::mutex> lock(_mtx);
-            // get location of food
-            // UpdateLastKnownFoodPoint(TODO GET FOOD FROM GAME);
-            // for now food will always be 1,1
-            
-            // make most reasonable move toward the food
-            int xdiff = head_x - this->_lastKnownFoodPoint.x;
-            int ydiff = head_y - this->_lastKnownFoodPoint.y;
-            bool yIsOnPoint = ydiff == 0;
-            bool xIsOnPoint = ydiff == 0;
-            if(yIsOnPoint){
-              if(xdiff > 0){
-                this->direction = Direction::kRight;
-              }
-              else{
-                this->direction = Direction::kLeft;
-              }
-            }
-            else if(xIsOnPoint){
-              if(ydiff > 0){
-                this->direction = Direction::kDown;
-              }
-              else{
-                this->direction = Direction::kUp;
-              }
-            }
+    // resusing code from my previous poject to generate random number for delay
+    std::random_device rdev;
+    std::default_random_engine randomTime(rdev());
+    std::uniform_int_distribution<int> distrib(1, 1);
+    int randomSeconds = distrib(randomTime);
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int>(randomSeconds);
+    while(!_gameOver){
+      if (now > stopTime){
+        std::lock_guard<std::mutex> lock(_mtx);
+        // get location of food
+        // UpdateLastKnownFoodPoint(TODO GET FOOD FROM GAME);
+        // for now food will always be 1,1
+        
+        // make most reasonable move toward the food
+        int xdiff = head_x - this->_lastKnownFoodPoint.x;
+        int ydiff = head_y - this->_lastKnownFoodPoint.y;
+        bool yIsOnPoint = ydiff == 0;
+        bool xIsOnPoint = xdiff == 0;
+        std::cout << "Current x an dy diff: " << xdiff << " " << ydiff << "\n"; 
+        if(yIsOnPoint){
+          if(xdiff > 0 && this->direction != Direction::kLeft){
 
-            
-
-            // delay for amount of time, set as snake quickness.
+            this->direction = Direction::kLeft;
           }
-          else{
-            now = std::chrono::system_clock::now();
+          else if( xdiff < 0 && this->direction != Direction::kRight){
+            this->direction = Direction::kRight;
           }
-          // sleep at every iteration to reduce CPU usage
-
-          std::this_thread::sleep_for(std::chrono::milliseconds(this->snakeSlowness));
         }
+        else if(xIsOnPoint){
+          if(ydiff > 0 && this->direction != Direction::kDown ){
+            this->direction = Direction::kDown;
+          }
+          else if(ydiff < 0 &&  this->direction != Direction::kUp){
+            this->direction = Direction::kUp;
+          }
+        }
+        else{
+          if(this->direction == Direction::kDown || this->direction == Direction::kUp){
+            this->direction = Direction::kLeft;
+          }
+          else if(this->direction == Direction::kLeft || this->direction == Direction::kRight){
+            this->direction = Direction::kDown;
+          }
+        }
+        std::cout << "Current Direction: " <<   "\n"; 
+
+
+        
+
+        // delay for amount of time, set as snake quickness.
+        // reset the clock
+        randomSeconds = distrib(randomTime);
+        now = std::chrono::system_clock::now();
+        stopTime = now + std::chrono::duration<int>(randomSeconds);
       }
+      else{
+        now = std::chrono::system_clock::now();
+      }
+      // sleep at every iteration to reduce CPU usage
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(this->snakeSlowness));
+    }
+  }
       
   private:
     std::vector<std::thread> threads; 
+    bool _gameOver = false;
 
-    int snakeSlowness{500}; // will god same direction(sleep) for millisecond before changing directions
+    int snakeSlowness{100}; // will go same direction(sleep) for millisecond before changing directions
     int player_num{0}; // 0 = computer
     SDL_Point _lastKnownFoodPoint{1,1};
     std::mutex _mtx;
