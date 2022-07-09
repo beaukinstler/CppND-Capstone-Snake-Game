@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "SDL.h"
+#include <mutex>
 
 class Snake {
  public:
@@ -54,6 +55,9 @@ class Snake {
   int grid_width;
   int grid_height;
   int player_num;
+
+private:
+  std::mutex _mtx;
 };
 
 #endif
