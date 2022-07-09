@@ -20,19 +20,20 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
 
-  std::vector<std::shared_ptr<Snake>> computerSnakes;
+  std::vector<std::shared_ptr<ComputerSnake>> computerSnakes;
 
   while (running) {
     frame_start = SDL_GetTicks();
     if(computerSnakes.size() == 0) {
       computerSnake.Release();
-      computerSnakes.push_back(std::make_shared<Snake>(std::move(computerSnake))) ;
+      computerSnakes.emplace_back(std::make_shared<ComputerSnake>(this->computerSnake)) ;
     };
 
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snake1);
     Update(snake1);
-    Update(computerSnake);
+    UpdateComp(computerSnake);
+
     // renderer.Render(computerSnake, food);
     // renderer.Render(snake, food);
     renderer.Render(snake1, computerSnake, food);
@@ -103,6 +104,36 @@ void Game::Update(Snake &snake) {
     // snake.speed += 0.00;
 
   }
+}
+
+void Game::UpdateComp(ComputerSnake &snake) {
+
+  // lock 
+  std::lock_guard<std::mutex> lock(_mtx);
+
+  // exit if snake 1 is not alive
+  if (!snake.alive || !(this->snake1.alive)) return;
+
+  snake.Update();
+
+
+  int new_x = static_cast<int>(snake.head_x);
+  int new_y = static_cast<int>(snake.head_y);
+
+  // Check if there's food over here
+  if (food.x == new_x && food.y == new_y) {
+    score--;
+    PlaceFood();
+    // Shrink snake and increase speed.
+    snake.GrowBody();
+    snake.speed += 0.02;
+    // snake.speed += 0.00;
+
+  }
+  else{
+    snake.UpdateLastKnownFoodPoint(Game::food);
+  }
+
 }
 
 int Game::GetScore() const { return score; }

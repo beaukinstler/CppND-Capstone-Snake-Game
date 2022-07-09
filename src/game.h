@@ -36,6 +36,7 @@ class Game {
 
   void PlaceFood();
   void Update(Snake& snake);
+  void UpdateComp(ComputerSnake& snake);
 };
 
 #endif
