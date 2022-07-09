@@ -45,6 +45,8 @@ class ComputerSnake : public Snake {
       void Release(){
         // start the hunting thread
         threads.emplace_back(std::thread(&ComputerSnake::Hunt, this));
+        
+    std::cout << "realease the snake thread\n";
       }
 
       void Hunt(){
