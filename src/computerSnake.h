@@ -6,11 +6,13 @@
 #include <random>
 #include <thread>
 #include <mutex>
+#include <iostream>
 
 class ComputerSnake : public Snake {
  public:
   // enum class Direction { kUp, kDown, kLeft, kRight };
   // ComputerSnake();
+  ComputerSnake(const ComputerSnake&){}; 
   ComputerSnake(int grid_width, int grid_height, int offset, int player_num)
       {
         this->grid_width = grid_width;
@@ -23,6 +25,16 @@ class ComputerSnake : public Snake {
             body.push_back(p);
         }
       }
+  ~ComputerSnake(){
+    // clean up thread swith thread barrier. 
+    _gameOver = true;
+    for(auto &t : threads)
+    {
+
+      t.join();
+    }
+    std::cout << "killed the snake\n";
+  }
 
       void UpdateLastKnownFoodPoint(const SDL_Point &food){
         _lastKnownFoodPoint.x = food.x;
