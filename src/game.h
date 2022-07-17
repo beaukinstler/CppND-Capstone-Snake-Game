@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "snake.h"
 #include "computerSnake.h"
+#include "messageQueue.h"
 
 #include <thread>
 #include <mutex>
