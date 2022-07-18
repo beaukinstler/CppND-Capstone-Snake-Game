@@ -1,6 +1,7 @@
 #include "game.h"
 #include <iostream>
 #include "SDL.h"
+#include "messageQueue.h"
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
     : snake1(grid_width, grid_height, 1),
@@ -8,7 +9,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
       computerSnake(grid_width, grid_height, 1, 0) {
-  PlaceFood();
+  // PlaceFood();
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -21,6 +22,11 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   bool running = true;
 
   std::vector<std::shared_ptr<ComputerSnake>> computerSnakes;
+  // std::shared_ptr<MessageQueue<FoodStatus>> foodMessageQueue(new MessageQueue<FoodStatus>);
+
+  
+  threads.emplace_back(std::thread(&Game::DropFood, this));
+
 
   while (running) {
     frame_start = SDL_GetTicks();
@@ -97,7 +103,8 @@ void Game::Update(Snake &snake) {
     if(snake.GetPlayerNum() != 0){
       score++;
     }
-    PlaceFood();
+    // PlaceFood();
+    EatFood();
     // Shrink snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
@@ -123,7 +130,8 @@ void Game::UpdateComp(ComputerSnake &snake) {
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
     score--;
-    PlaceFood();
+    // PlaceFood();
+    EatFood();
     // Shrink snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
@@ -138,3 +146,37 @@ void Game::UpdateComp(ComputerSnake &snake) {
 
 int Game::GetScore() const { return score; }
 int Game::GetSize() const { return snake1.size; }
+
+
+void Game::EatFood(){
+  // std::lock_guard<std::mutex> lck(_mtx);
+  Game::gameMessages.send(std::move(FoodStatus::eaten));
+}
+
+void Game::DropFood(){
+  std::cout << "DropFood started \n";
+  while(true){
+    Game::PlaceFood();
+  std::cout << "Food Placed \n";
+    
+    Game::waitForFoodEaten();
+  }
+
+
+
+}
+
+void Game::waitForFoodEaten()
+{
+    // an infinite while-loop runs and repeatedly calls the receive function on the message queue.
+    // Once it receives FoodStatus::Eaten, the method returns.
+
+    while (true)
+    {
+        if (Game::FoodStatus::eaten == this->gameMessages.receive())
+        {
+            std::cout << "Food was eaten, so about to return from waitForFoodEaten \n";
+            return;
+        }
+    }
+}

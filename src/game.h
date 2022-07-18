@@ -43,6 +43,8 @@ class Game {
   void Update(Snake& snake);
   void UpdateComp(ComputerSnake& snake);
   MessageQueue<FoodStatus> gameMessages;
+  void waitForFoodEaten();
+  std::vector<std::thread> threads;
 };
 
 #endif
