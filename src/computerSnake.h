@@ -83,12 +83,12 @@ class ComputerSnake : public Snake {
         else if(xIsOnPoint){
           if(ydiff < 0){
             if(this->direction != Direction::kUp ){
-            this->direction = Direction::kDown;
-          }
+              this->direction = Direction::kDown;
+            }
           }
           else if(ydiff > 0){
             if(this->direction != Direction::kDown){
-            this->direction = Direction::kUp;
+              this->direction = Direction::kUp;
             }
           }
         }
