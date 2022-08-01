@@ -72,20 +72,24 @@ class ComputerSnake : public Snake {
         bool xIsOnPoint = xdiff == 0;
         std::cout << "Current x an dy diff: " << xdiff << " " << ydiff << "\n"; 
         if(yIsOnPoint){
-          if(xdiff > 0 && this->direction != Direction::kLeft){
+          if(xdiff > 0 && this->direction != Direction::kRight){
 
             this->direction = Direction::kLeft;
           }
-          else if( xdiff < 0 && this->direction != Direction::kRight){
+          else if( xdiff < 0 && this->direction != Direction::kLeft){
             this->direction = Direction::kRight;
           }
         }
         else if(xIsOnPoint){
-          if(ydiff > 0 && this->direction != Direction::kDown ){
+          if(ydiff < 0){
+            if(this->direction != Direction::kUp ){
             this->direction = Direction::kDown;
           }
-          else if(ydiff < 0 &&  this->direction != Direction::kUp){
+          }
+          else if(ydiff > 0){
+            if(this->direction != Direction::kDown){
             this->direction = Direction::kUp;
+            }
           }
         }
         else{
