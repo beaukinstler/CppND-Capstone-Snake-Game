@@ -47,6 +47,8 @@ class Snake {
   float head_y;
   std::vector<SDL_Point> body;
 
+  void SpillGuts() const;
+
  protected:
   void UpdateHead();
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);

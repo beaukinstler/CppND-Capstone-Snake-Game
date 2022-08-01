@@ -63,6 +63,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   // Check if the snake has died.
   for (auto const &item : body) {
     if (current_head_cell.x == item.x && current_head_cell.y == item.y) {
+      SpillGuts();
       alive = false;
     }
   }
@@ -86,4 +87,13 @@ bool Snake::SnakeCell(int x, int y) {
 int Snake::GetPlayerNum() const
 {
   return this->player_num;
+}
+
+
+void Snake::SpillGuts() const{
+  std::cout << "SNAKE GUTS\n";
+  std::cout << "~~~~~~~~~~~\n";
+  std::cout << static_cast<std::underlying_type<Direction>::type>(this->direction) << "\n";
+  std::cout << "~~~~~~~~~~~\n";
+  std::cout << "~~~~~~~~~~~\n";
 }
