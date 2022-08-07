@@ -54,10 +54,10 @@ class ComputerSnake : public Snake {
     // resusing code from my previous poject to generate random number for delay
     std::random_device rdev;
     std::default_random_engine randomTime(rdev());
-    std::uniform_int_distribution<int> distrib(1, 1);
-    int randomSeconds = distrib(randomTime);
+    std::uniform_int_distribution<int> distrib(1, snakeVariablityRange); // 10 std::deci  == 1 second (std::ratio<1,10> == std::deci)
+    int randomSeconds = 30; // just to start. Over 10 will be a longer than usual delay. 100 ~ 10 seconds
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-    std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int>(randomSeconds);
+    std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int, std::deci>(randomSeconds);
     while(!_gameOver){
       now = std::chrono::system_clock::now();
       if (now > stopTime){
@@ -109,15 +109,15 @@ class ComputerSnake : public Snake {
         // delay for amount of time, set as snake quickness.
         // reset the clock
         randomSeconds = distrib(randomTime);
-        now = std::chrono::system_clock::now();
-        stopTime = now + std::chrono::duration<int>(randomSeconds);
+        stopTime = now + std::chrono::duration<int, std::deci>(randomSeconds);
       }
       else{
         //now = std::chrono::system_clock::now();
       }
       // sleep at every iteration to reduce CPU usage
 
-      std::this_thread::sleep_for(std::chrono::milliseconds(this->snakeSlowness));
+      std::this_thread::sleep_for(snakeMaxAgility);
+
     }
   }
       
@@ -125,7 +125,12 @@ class ComputerSnake : public Snake {
     std::vector<std::thread> threads; 
     bool _gameOver = false;
 
-    int snakeSlowness{100}; // will go same direction(sleep) for millisecond before changing directions
+    
+    // will go same direction this durration before changing directions
+    // also impacted by the variablity of the randomness
+    std::chrono::duration<int,std::deci> snakeMaxAgility{2}; 
+    int snakeVariablityRange{7};
+
     int player_num{0}; // 0 = computer
     SDL_Point _lastKnownFoodPoint{1,1};
     std::mutex _mtx;
