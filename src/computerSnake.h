@@ -69,9 +69,18 @@ class ComputerSnake : public Snake {
         // make most reasonable move toward the food
         int xdiff = head_x - this->_lastKnownFoodPoint.x;
         int ydiff = head_y - this->_lastKnownFoodPoint.y;
-        bool yIsOnPoint = ydiff == 0;
-        bool xIsOnPoint = xdiff == 0;
-        std::cout << "Current x an dy diff: " << xdiff << " " << ydiff << "\n"; 
+
+        // DEBUG
+        // std::cout << "DEBUG: x y for last known good food locations:\n(" << _lastKnownFoodPoint.x <<"," << _lastKnownFoodPoint.y << ")\n\n";
+        // std::cout << "DEBUG: x y for head:\n(" << head_x<<"," << head_y  << ")\n\n";
+
+
+        // bool yIsOnPoint = std::abs(ydiff * 10.0) <= 8 && std::abs(ydiff * 10.0) > 2;
+        bool yIsOnPoint = int(head_y) == this->_lastKnownFoodPoint.y;
+        // bool xIsOnPoint = std::abs(xdiff * 10.0) <= 8 && std::abs(xdiff * 10.0) > 2;
+        bool xIsOnPoint = int(head_x) == this->_lastKnownFoodPoint.x;
+
+        std::cout << "Current x diff: "  << xdiff << " ---- y diff: " << ydiff << "\n"; 
         if(yIsOnPoint){
           if(xdiff > 0 && this->direction != Direction::kRight){
 
