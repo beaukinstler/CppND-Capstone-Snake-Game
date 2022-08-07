@@ -80,6 +80,8 @@ void Game::PlaceFood() {
     if (!this->snake1.SnakeCell(x, y) && !this->computerSnake.SnakeCell(x, y)) {
       food.x = x;
       food.y = y;
+      // DEBUG
+      // std::cout << "DEBUG: x y for food placed (" << x <<"," << y << ")\n";
       return;
     }
   }
