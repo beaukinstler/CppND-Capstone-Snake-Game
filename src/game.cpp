@@ -157,7 +157,7 @@ void Game::DropFood(){
   std::cout << "DropFood started \n";
   while(true){
     Game::PlaceFood();
-  std::cout << "Food Placed \n";
+    std::cout << "Food Placed \n";
     
     Game::waitForFoodEaten();
   }
