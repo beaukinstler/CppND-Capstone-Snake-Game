@@ -88,7 +88,7 @@ void Renderer::RenderSnake(Snake const &snake, SDL_Rect &block){
     }
     else{
       // Clear snake
-      SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
+      SDL_SetRenderDrawColor(sdl_renderer, 0xAA, 0x1E, 0xBA, 0xFF);
     } 
   }
   for (SDL_Point const &point : snake.body) {
