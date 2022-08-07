@@ -59,6 +59,7 @@ class ComputerSnake : public Snake {
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
     std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int>(randomSeconds);
     while(!_gameOver){
+      now = std::chrono::system_clock::now();
       if (now > stopTime){
         std::lock_guard<std::mutex> lock(_mtx);
         // get location of food
@@ -112,7 +113,7 @@ class ComputerSnake : public Snake {
         stopTime = now + std::chrono::duration<int>(randomSeconds);
       }
       else{
-        now = std::chrono::system_clock::now();
+        //now = std::chrono::system_clock::now();
       }
       // sleep at every iteration to reduce CPU usage
 
