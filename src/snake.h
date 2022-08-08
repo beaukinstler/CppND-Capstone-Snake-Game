@@ -53,7 +53,7 @@ class Snake {
   void UpdateHead();
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 
-  bool growing{false};
+  bool shrinking{false};
   int grid_width;
   int grid_height;
   int player_num;

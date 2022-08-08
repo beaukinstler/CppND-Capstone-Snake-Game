@@ -49,13 +49,13 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   // Add previous head location to vector
   body.push_back(prev_head_cell);
 
-  if (!growing) {
+  if (!shrinking) {
     // Remove the tail from the vector.
     body.erase(body.begin());
   } else {
-    growing = false;
+    shrinking = false;
     size--;
-    // body.pop_back(); // this leaves a gap
+    // body.pop_back(); // this leaves a gap can be a fun way to play.
     body.erase(body.begin());
     body.erase(body.begin());
   }
@@ -69,7 +69,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   }
 }
 
-void Snake::GrowBody() { growing = true; }
+void Snake::GrowBody() { shrinking = true; }
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {
