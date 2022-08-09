@@ -25,7 +25,7 @@ void ComputerSnake::Hunt(){
     int randomSeconds = 30; // just to start. Over 10 will be a longer than usual delay. 100 ~ 10 seconds
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
     std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int, std::deci>(randomSeconds);
-    while(!_gameOver){
+    while(!_gameOver && this->alive == true){
       now = std::chrono::system_clock::now();
       if (now > stopTime){
         std::lock_guard<std::mutex> lock(_mtx);
