@@ -4,6 +4,8 @@
 #include <vector>
 #include "SDL.h"
 #include <mutex>
+#include <iostream>
+#include "gameDebug.h"
 
 class Snake {
  public:
@@ -21,33 +23,32 @@ class Snake {
             body.push_back(p);
           }
         }
-  // Snake(int grid_width, int grid_height, int offset, int player_num)
-  //     : grid_width(grid_width),
-  //       grid_height(grid_height),
-  //       player_num(player_num),
-  //       head_x(grid_width / 2  - offset ),
-  //       head_y(grid_height / 2  - offset ) {
-  //         for(int i = 0; i < size; i++){
-  //           SDL_Point p{head_x, (head_y + (i * 1.0) + 1.0)};
-  //           body.push_back(p);
-  //         }
-  //       }
+  ~Snake()
+  {
+    std::cout << "Snake at " << this << "is passing on...\n";
+    for( auto seg : body){
+      seg.x = NULL;
+      seg.y = NULL;
+    }
+
+  }
 
   void Update();
 
-  void GrowBody();
+  void ShrinkBody();
   bool SnakeCell(int x, int y);
   int GetPlayerNum() const;
   Direction direction = Direction::kUp;
 
   float speed{0.1f};
-  int size{30};
+  int size{3};
   bool alive{true};
   float head_x;
   float head_y;
   std::vector<SDL_Point> body;
 
   void SpillGuts() const;
+  bool IsWinner() const;
 
  protected:
   void UpdateHead();
@@ -60,6 +61,7 @@ class Snake {
 
 private:
   std::mutex _mtx;
+  bool _won{false};
 };
 
 #endif

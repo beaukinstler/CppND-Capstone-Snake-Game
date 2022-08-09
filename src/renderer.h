@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include "snake.h"
 #include <mutex>
+#include "gameDebug.h"
 
 class Renderer {
  public:

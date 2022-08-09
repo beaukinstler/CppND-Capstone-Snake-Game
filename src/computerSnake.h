@@ -8,6 +8,7 @@
 #include <mutex>
 #include <iostream>
 #include "snake.h"
+#include "gameDebug.h"
 
 class ComputerSnake : public Snake {
  public:
@@ -28,13 +29,13 @@ class ComputerSnake : public Snake {
         }
     ~ComputerSnake(){
       // clean up threads with a thread barrier. 
-      _gameOver = true;
+      _snakesGameOver = true;
       for(auto &t : threads)
       {
 
         t.join();
       }
-      std::cout << "killed the snake\n";
+      GameDebug::gameDebugMsg("killed the snake\n");
     }
 
     void UpdateLastKnownFoodPoint(const SDL_Point &food);
@@ -47,7 +48,7 @@ class ComputerSnake : public Snake {
   private:
     void Hunt();
     std::vector<std::thread> threads; 
-    bool _gameOver = false;
+    bool _snakesGameOver = false;
 
     
     // will go same direction this durration before changing directions

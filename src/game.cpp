@@ -12,6 +12,13 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
   // PlaceFood();
 }
 
+Game::~Game(){
+    std::for_each(gameThreads.begin(), gameThreads.end(), [](std::thread &t) {
+        t.join();
+    });
+
+}
+
 void Game::Run(Controller const &controller, Renderer &renderer,
                std::size_t target_frame_duration) {
   Uint32 title_timestamp = SDL_GetTicks();
@@ -21,14 +28,11 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
 
-  std::vector<std::shared_ptr<ComputerSnake>> computerSnakes;
-  // std::shared_ptr<MessageQueue<FoodStatus>> foodMessageQueue(new MessageQueue<FoodStatus>);
-
   
-  threads.emplace_back(std::thread(&Game::DropFood, this));
+  gameThreads.emplace_back(std::thread(&Game::DropFood, this));
 
 
-  while (running) {
+  while (running && !_gameOver) {
     frame_start = SDL_GetTicks();
     if(computerSnakes.size() == 0) {
       computerSnake.Release();
@@ -40,11 +44,18 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     Update(snake1);
     UpdateComp(computerSnake);
 
+    if(snake1.IsWinner()){
+      std::cout << "You WON!\n";
+      // break;
+    }
+    else if (_gameOver) {
+      std::cout << "You have been bested!\n";
+      // break;
+    }
+
     // renderer.Render(computerSnake, food);
     // renderer.Render(snake, food);
     renderer.Render(snake1, computerSnake, food);
-
-
 
     frame_end = SDL_GetTicks();
 
@@ -60,13 +71,16 @@ void Game::Run(Controller const &controller, Renderer &renderer,
       title_timestamp = frame_end;
     }
 
+
+
     // If the time for this frame is too small (i.e. frame_duration is
     // smaller than the target ms_per_frame), delay the loop to
     // achieve the correct frame rate.
-    if (frame_duration < target_frame_duration) {
+    if(frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
   }
+
 }
 
 void Game::PlaceFood() {
@@ -80,8 +94,6 @@ void Game::PlaceFood() {
     if (!this->snake1.SnakeCell(x, y) && !this->computerSnake.SnakeCell(x, y)) {
       food.x = x;
       food.y = y;
-      // DEBUG
-      // std::cout << "DEBUG: x y for food placed (" << x <<"," << y << ")\n";
       return;
     }
   }
@@ -108,9 +120,16 @@ void Game::Update(Snake &snake) {
     // PlaceFood();
     EatFood();
     // Shrink snake and increase speed.
-    snake.GrowBody();
+    snake.ShrinkBody();
     snake.speed += 0.02;
-    // snake.speed += 0.00;
+
+    // if(snake.IsWinner()){
+    //   GameOver();
+    // }
+    if(snake.IsWinner()){
+      GameDebug::gameDebugMsg("Player is winner. Sending FoodStatus::gone message to gameMessages.");
+      Game::gameMessages.send(Game::FoodStatus::gone);
+    }
 
   }
 }
@@ -135,9 +154,15 @@ void Game::UpdateComp(ComputerSnake &snake) {
     // PlaceFood();
     EatFood();
     // Shrink snake and increase speed.
-    snake.GrowBody();
+    snake.ShrinkBody();
     snake.speed += 0.02;
-    // snake.speed += 0.00;
+
+    if(snake.IsWinner()){
+      GameDebug::gameDebugMsg("Computer snake is winner. Sending FoodStatus::gone message to gameMessages.");
+      Game::gameMessages.send(Game::FoodStatus::gone);
+    }
+
+
 
   }
   else{
@@ -156,12 +181,13 @@ void Game::EatFood(){
 }
 
 void Game::DropFood(){
-  std::cout << "DropFood started \n";
-  while(true){
+  GameDebug::gameDebugMsg("DropFood started \n");
+  while(true && !Game::_gameOver){
     Game::PlaceFood();
-    std::cout << "Food Placed \n";
+    GameDebug::gameDebugMsg("Food Placed \n");
     
     Game::waitForFoodEaten();
+    GameDebug::gameDebugMsg("Debug: DropFood just saw waitForFoodEaten");
   }
 
 
@@ -173,12 +199,25 @@ void Game::waitForFoodEaten()
     // an infinite while-loop runs and repeatedly calls the receive function on the message queue.
     // Once it receives FoodStatus::Eaten, the method returns.
 
-    while (true)
-    {
-        if (Game::FoodStatus::eaten == this->gameMessages.receive())
+    while (true && !_gameOver)
+    { 
+        auto msg = this->gameMessages.receive();
+        if (Game::FoodStatus::eaten == msg)
         {
-            std::cout << "Food was eaten, so about to return from waitForFoodEaten \n";
+            GameDebug::gameDebugMsg("Food was eaten, so about to return from waitForFoodEaten");
             return;
         }
+        else if (Game::FoodStatus::gone == msg)
+        {
+          GameOver();
+          GameDebug::gameDebugMsg("Someone won, so this should be the last time we call waitForFoodEaten");
+          return;
+        }
     }
+}
+
+
+void Game::GameOver(){
+  _gameOver = true;
+  std::cout << "Game over!\n--------\n";
 }

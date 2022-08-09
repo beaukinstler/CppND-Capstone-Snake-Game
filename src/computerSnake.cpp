@@ -12,7 +12,7 @@ void ComputerSnake::Release(){
     // start the hunting thread
     threads.emplace_back(std::thread(&ComputerSnake::Hunt, this));
         
-    std::cout << "realease the snake thread\n";
+    GameDebug::gameDebugMsg("realease the snake thread");
 }
 
 
@@ -25,7 +25,7 @@ void ComputerSnake::Hunt(){
     int randomSeconds = 30; // just to start. Over 10 will be a longer than usual delay. 100 ~ 10 seconds
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
     std::chrono::time_point<std::chrono::system_clock> stopTime = now + std::chrono::duration<int, std::deci>(randomSeconds);
-    while(!_gameOver && this->alive == true){
+    while(!_snakesGameOver && this->alive == true){
       now = std::chrono::system_clock::now();
       if (now > stopTime){
         std::lock_guard<std::mutex> lock(_mtx);
@@ -37,17 +37,13 @@ void ComputerSnake::Hunt(){
         int xdiff = head_x - this->_lastKnownFoodPoint.x;
         int ydiff = head_y - this->_lastKnownFoodPoint.y;
 
-        // DEBUG
-        // std::cout << "DEBUG: x y for last known good food locations:\n(" << _lastKnownFoodPoint.x <<"," << _lastKnownFoodPoint.y << ")\n\n";
-        // std::cout << "DEBUG: x y for head:\n(" << head_x<<"," << head_y  << ")\n\n";
-
-
         // bool yIsOnPoint = std::abs(ydiff * 10.0) <= 8 && std::abs(ydiff * 10.0) > 2;
         bool yIsOnPoint = int(head_y) == this->_lastKnownFoodPoint.y;
         // bool xIsOnPoint = std::abs(xdiff * 10.0) <= 8 && std::abs(xdiff * 10.0) > 2;
         bool xIsOnPoint = int(head_x) == this->_lastKnownFoodPoint.x;
 
-        std::cout << "Current x diff: "  << xdiff << " ---- y diff: " << ydiff << "\n"; 
+        GameDebug::gameDebugMsg("Current x diff: " + std::to_string(xdiff));
+        GameDebug::gameDebugMsg("Current  y diff: " + std::to_string(ydiff) ); 
         if(yIsOnPoint){
           if(xdiff > 0 && this->direction != Direction::kRight){
 
@@ -77,8 +73,7 @@ void ComputerSnake::Hunt(){
             this->direction = Direction::kDown;
           }
         }
-        std::cout << "Current Direction: " <<   "\n"; 
-
+        
 
         
 

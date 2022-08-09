@@ -5,6 +5,7 @@
 #include <deque>
 #include <condition_variable>
 
+
 template <typename T>
 class MessageQueue
 {

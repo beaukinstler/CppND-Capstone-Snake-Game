@@ -52,13 +52,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   if (!shrinking) {
     // Remove the tail from the vector.
     body.erase(body.begin());
-  } else {
-    shrinking = false;
-    size--;
-    // body.pop_back(); // this leaves a gap can be a fun way to play.
-    body.erase(body.begin());
-    body.erase(body.begin());
-  }
+  } 
 
   // Check if the snake has died.
   for (auto const &item : body) {
@@ -69,7 +63,19 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   }
 }
 
-void Snake::GrowBody() { shrinking = true; }
+void Snake::ShrinkBody() { 
+  shrinking = true;
+  if(body.size() < 2){
+    this->_won = true;
+  }
+  else {
+      shrinking = false;
+      size--;
+      // body.pop_back(); // this leaves a gap can be a fun way to play.
+      body.erase(body.begin());
+      // body.erase(body.begin());
+    }
+}
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {
@@ -91,9 +97,16 @@ int Snake::GetPlayerNum() const
 
 
 void Snake::SpillGuts() const{
-  std::cout << "SNAKE GUTS\n";
+  std::cout << "SPILLING SNAKE GUTS\n";
   std::cout << "~~~~~~~~~~~\n";
-  std::cout << static_cast<std::underlying_type<Direction>::type>(this->direction) << "\n";
+  std::cout << "Player Number: " << this->GetPlayerNum()  << "\n";
   std::cout << "~~~~~~~~~~~\n";
   std::cout << "~~~~~~~~~~~\n";
+  GameDebug::gameDebugMsg( std::to_string(static_cast<std::underlying_type<Direction>::type>(this->direction)) + "\n");
+
+}
+
+bool Snake::IsWinner() const
+{
+  return _won;
 }
