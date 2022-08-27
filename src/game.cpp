@@ -105,8 +105,11 @@ void Game::Update(Snake &snake) {
   std::lock_guard<std::mutex> lock(_mtx);
 
   // exit if snake 1 is not alive
-  if (!snake.alive || !(this->snake1.alive)) return;
-
+  if (!snake.alive || !(this->snake1.alive))
+  {
+    GameOver();
+    return;
+  }
   snake.Update();
 
   int new_x = static_cast<int>(snake.head_x);
