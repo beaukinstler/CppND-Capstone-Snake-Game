@@ -30,14 +30,14 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
 
   gameThreads.emplace_back(std::thread(&Game::DropFood, this));
-
+  computerSnake.Release();
 
   while (running && !_gameOver) {
     frame_start = SDL_GetTicks();
-    if(computerSnakes.size() == 0) {
-      computerSnake.Release();
-      computerSnakes.emplace_back(std::make_shared<ComputerSnake>(this->computerSnake)) ;
-    };
+    // if(computerSnakes.size() == 0) {
+    //   computerSnake.Release();
+    //   computerSnakes.emplace_back(std::make_shared<ComputerSnake>(this->computerSnake)) ;
+    // };
 
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snake1);
