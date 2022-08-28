@@ -42,13 +42,15 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snake1);
     Update(snake1);
-    UpdateComp(computerSnake);
 
     if(snake1.IsWinner()){
       std::cout << "You WON!\n";
-      // break;
+      break;
     }
-    else if (_gameOver) {
+
+    UpdateComp(computerSnake);
+
+    if (_gameOver) {
       std::cout << "You have been bested!\n";
       // break;
     }
@@ -126,12 +128,9 @@ void Game::Update(Snake &snake) {
     snake.ShrinkBody();
     snake.speed += 0.02;
 
-    // if(snake.IsWinner()){
-    //   GameOver();
-    // }
     if(snake.IsWinner()){
-      GameDebug::gameDebugMsg("Player is winner. Sending FoodStatus::gone message to gameMessages.");
-      Game::gameMessages.send(Game::FoodStatus::gone);
+      GameOver();
+      GameDebug::gameDebugMsg("Player is winner. Sent FoodStatus::gone message to gameMessages.");
     }
 
   }
@@ -161,8 +160,8 @@ void Game::UpdateComp(ComputerSnake &snake) {
     snake.speed += 0.02;
 
     if(snake.IsWinner()){
-      GameDebug::gameDebugMsg("Computer snake is winner. Sending FoodStatus::gone message to gameMessages.");
-      Game::gameMessages.send(Game::FoodStatus::gone);
+      GameOver();
+      GameDebug::gameDebugMsg("Computer snake is winner. Sent FoodStatus::gone message to gameMessages.");
     }
 
 
@@ -212,7 +211,6 @@ void Game::waitForFoodEaten()
         }
         else if (Game::FoodStatus::gone == msg)
         {
-          GameOver();
           GameDebug::gameDebugMsg("Someone won, so this should be the last time we call waitForFoodEaten");
           return;
         }
@@ -221,6 +219,8 @@ void Game::waitForFoodEaten()
 
 
 void Game::GameOver(){
+
+  this->gameMessages.send(Game::FoodStatus::gone);
   _gameOver = true;
   std::cout << "Game over!\n--------\n";
 }
