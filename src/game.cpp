@@ -139,7 +139,7 @@ void Game::Update(Snake &snake) {
 
 void Game::UpdateComp(ComputerSnake &snake) {
 
-  // lock 
+  // lock
   std::lock_guard<std::mutex> lock(_mtx);
 
   // exit if snake 1 is not alive
@@ -188,7 +188,7 @@ void Game::DropFood(){
   while(true && !Game::_gameOver){
     Game::PlaceFood();
     GameDebug::gameDebugMsg("Food Placed \n");
-    
+
     Game::waitForFoodEaten();
     GameDebug::gameDebugMsg("Debug: DropFood just saw waitForFoodEaten");
   }
@@ -203,7 +203,7 @@ void Game::waitForFoodEaten()
     // Once it receives FoodStatus::Eaten, the method returns.
 
     while (true && !_gameOver)
-    { 
+    {
         auto msg = this->gameMessages.receive();
         if (Game::FoodStatus::eaten == msg)
         {
