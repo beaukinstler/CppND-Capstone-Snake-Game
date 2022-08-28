@@ -28,7 +28,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
 
-  
+
   gameThreads.emplace_back(std::thread(&Game::DropFood, this));
 
 
@@ -101,7 +101,7 @@ void Game::PlaceFood() {
 
 void Game::Update(Snake &snake) {
 
-  // lock 
+  // lock
   std::lock_guard<std::mutex> lock(_mtx);
 
   // exit if snake 1 is not alive
