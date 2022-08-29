@@ -83,6 +83,10 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     }
   }
 
+  if(snake1.IsWinner() || !snake1.alive || computerSnake.IsWinner()){
+    GameOver();
+  }
+
 }
 
 void Game::PlaceFood() {

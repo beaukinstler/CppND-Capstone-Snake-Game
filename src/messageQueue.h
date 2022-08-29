@@ -13,7 +13,7 @@ public:
     
     MessageQueue(){};
     ~MessageQueue(){
-        std::cout << "MessageQueue desctructor called \n";
+        // std::cout << "MessageQueue desctructor called \n";
     };
 
     void send( T&& );
