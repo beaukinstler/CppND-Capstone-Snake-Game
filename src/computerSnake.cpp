@@ -90,6 +90,7 @@ void ComputerSnake::Hunt(){
       std::this_thread::sleep_for(snakeMaxAgility);
 
     }
+    GameDebug::gameDebugMsg("Hunt has stopped.");
   }
 
   void ComputerSnake::ShrinkBody() { 
@@ -105,8 +106,8 @@ void ComputerSnake::Hunt(){
         // body.erase(body.begin());
 
         // increase rate of change allowed 
-        if(this->snakeVariablityRange > 0){
-          this->snakeVariablityRange -= 1;
+        if(this->snakeVariablityRange > 1){
+          this->snakeVariablityRange -= 2;
         }
     }
   }
