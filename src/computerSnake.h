@@ -43,6 +43,11 @@ class ComputerSnake : public Snake {
     // release the snake
     void Release();
 
+    // Override the Snake's ShrinkBody
+    // Will also increase agility of the computer snake.
+    void ShrinkBody();
+
+
 
       
   private:

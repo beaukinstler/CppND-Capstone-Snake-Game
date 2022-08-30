@@ -58,10 +58,10 @@ class Snake {
   int grid_width;
   int grid_height;
   int player_num;
-
+  bool _won{false};
 private:
   std::mutex _mtx;
-  bool _won{false};
+
 };
 
 #endif

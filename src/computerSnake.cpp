@@ -92,5 +92,22 @@ void ComputerSnake::Hunt(){
     }
   }
 
+  void ComputerSnake::ShrinkBody() { 
+    shrinking = true; 
+    if(body.size() < 2){
+      this->_won = true;
+    }
+    else {
+        shrinking = false;
+        size--;
+        // body.pop_back(); // this leaves a gap can be a fun way to play.
+        body.erase(body.begin());
+        // body.erase(body.begin());
 
+        // increase rate of change allowed 
+        if(this->snakeVariablityRange > 0){
+          this->snakeVariablityRange -= 1;
+        }
+    }
+  }
 
