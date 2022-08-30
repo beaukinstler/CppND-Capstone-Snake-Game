@@ -54,7 +54,7 @@ class ComputerSnake : public Snake {
     // will go same direction this durration before changing directions
     // also impacted by the variablity of the randomness
     std::chrono::duration<int,std::centi> snakeMaxAgility{15}; // lower number == less sleep time on the thread
-    int snakeVariablityRange{7}; // == random nubers from 1 to snakeVariablityRange will be used to alter the movements of the snake. lower numbers more consistant and faster moves
+    int snakeVariablityRange{5}; // == random nubers from 1 to snakeVariablityRange will be used to alter the movements of the snake. lower numbers more consistant and faster moves
 
     int player_num{0}; // 0 = computer
     SDL_Point _lastKnownFoodPoint{1,1};
