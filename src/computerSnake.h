@@ -29,7 +29,7 @@ class ComputerSnake : public Snake {
         }
     ~ComputerSnake(){
       // clean up threads with a thread barrier. 
-      _snakesGameOver = true;
+
       for(auto &t : threads)
       {
 

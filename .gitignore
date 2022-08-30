@@ -1,5 +1,6 @@
 .github/**
 cmake
 .vscode
-build
+
 build\ copy/
+dev
