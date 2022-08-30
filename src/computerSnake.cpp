@@ -90,7 +90,6 @@ void ComputerSnake::Hunt(){
       std::this_thread::sleep_for(snakeMaxAgility);
 
     }
-    GameDebug::gameDebugMsg("Hunt has stopped.");
   }
 
   void ComputerSnake::ShrinkBody() { 
